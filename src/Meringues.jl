@@ -1,5 +1,9 @@
 module Meringues
 
-greet() = print("Hello World!")
+export Syrup
+include("types.jl")
+
+export Recipe
+include("Recipe.jl")
 
 end # module Meringues
