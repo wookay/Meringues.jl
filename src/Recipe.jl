@@ -18,12 +18,6 @@ function dissolve(sugar::Expr)::Syrup
     Syrup(starch, slurry)
 end
 
-# ≈
-function Base.isapprox(lhs::Syrup, rhs::Syrup)::Bool
-    Base.remove_linenums!(lhs.starch) == Base.remove_linenums!(rhs.starch) &&
-    lhs.slurry === rhs.slurry
-end
-
 function findall(sugar::Expr, rack::Vector{T})::Vector{T} where T <: NamedTuple
     f_expr = :(Base.findall)
     syrup = dissolve(sugar)
