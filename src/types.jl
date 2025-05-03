@@ -15,7 +15,9 @@ function Base.isapprox(lhs::Syrup, rhs::Syrup)::Bool
 end
 
 function Base.isapprox(lhs::Expr, rhs::Expr)::Bool
-    Base.remove_linenums!(lhs) == Base.remove_linenums!(rhs)
+    left  = copy(lhs)
+    right = copy(rhs)
+    Base.remove_linenums!(left) == Base.remove_linenums!(right)
 end
 
 # module Meringues
