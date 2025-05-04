@@ -47,4 +47,6 @@ function findlast(sugar::Expr, rack::Vector{T})::Union{Nothing, T} where T <: Na
     return _find(f_expr, sugar, rack)
 end
 
+include("expr.jl")
+
 end # module Meringues.Recipe
