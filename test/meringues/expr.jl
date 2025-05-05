@@ -3,6 +3,18 @@ module test_meringues_expr
 using Test
 using Meringues # Recipe ≈(::Expr, ::Expr)
 
+expr = :( MIME"text/html" ) # line 6
+
+ex = Base.remove_linenums!(copy(expr))
+@test string(ex) == "MIME\"text/html\""
+@test ex.args[2] == LineNumberNode(6, @__FILE__)
+@test ex == Expr(:macrocall, Symbol("@MIME_str"), LineNumberNode(6, @__FILE__), "text/html")
+
+ex = Recipe.remove_linenums!(copy(expr))
+@test string(ex) == "MIME\"text/html\""
+@test ex.args[2] === nothing
+@test ex == Expr(:macrocall, Symbol("@MIME_str"), nothing, "text/html")
+
 defs = quote
     Base.show(io::IO, m::MIME"text/html", dp::DatePicker)
     Base.get(dp::DatePicker)
