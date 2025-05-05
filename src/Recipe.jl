@@ -3,13 +3,13 @@ module Recipe # Meringues
 using ..Meringues: Syrup
 
 function dissolve(sugar::Expr)::Syrup
-    granules::Union{Symbol, Expr} = sugar.args[1]
-    if granules isa Symbol
-        granule = granules
+    granular::Union{Symbol, Expr} = sugar.args[1]
+    if granular isa Symbol
+        granule = granular
         slurry = nothing
-    elseif granules isa Expr
-        @assert granules.head === :(::)
-        (granule, slurry) = granules.args
+    elseif granular isa Expr
+        @assert granular.head === :(::)
+        (granule, slurry) = granular.args
     else
         granule = Expr(:block)
         slurry = nothing
@@ -19,16 +19,16 @@ function dissolve(sugar::Expr)::Syrup
 end
 
 function findall(sugar::Expr, rack::Vector{T})::Vector{T} where T <: NamedTuple
-    f_expr = :(Base.findall)
-    syrup = dissolve(sugar)
-    find_expr = Expr(:call, f_expr, syrup.starch, rack)
+    f_expr::Expr = :(Base.findall)
+    syrup::Syrup = dissolve(sugar)
+    find_expr::Expr = Expr(:call, f_expr, syrup.starch, rack)
     idxs::Vector{Int} = Core.eval(@__MODULE__, find_expr)
     return getindex(rack, idxs)
 end
 
 function _find(f_expr::Expr, sugar::Expr, rack::Vector{T})::Union{Nothing, T} where T <: NamedTuple
-    syrup = dissolve(sugar)
-    find_expr = Expr(:call, f_expr, syrup.starch, rack)
+    syrup::Syrup = dissolve(sugar)
+    find_expr::Expr = Expr(:call, f_expr, syrup.starch, rack)
     idx::Union{Nothing, Int} = Core.eval(@__MODULE__, find_expr)
     if idx === nothing
         return nothing

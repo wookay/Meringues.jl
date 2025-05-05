@@ -6,7 +6,8 @@ struct Syrup
 end
 
 function Base.:(==)(lhs::Syrup, rhs::Syrup)::Bool
-    lhs.starch == rhs.starch && lhs.slurry === rhs.slurry
+    lhs.slurry === rhs.slurry &&
+    lhs.starch == rhs.starch
 end
 
 # module Meringues

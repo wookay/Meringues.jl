@@ -2,7 +2,8 @@
 
 # ≈  \approx<tab>
 function Base.isapprox(lhs::Syrup, rhs::Syrup)::Bool
-    lhs.starch ≈ rhs.starch && lhs.slurry === rhs.slurry
+    lhs.slurry === rhs.slurry &&
+    lhs.starch ≈ rhs.starch
 end
 
 function Base.isapprox(lhs::Expr, rhs::Expr)::Bool
@@ -26,15 +27,9 @@ function remove_linenums!(@nospecialize ex)
             end
         ### macrocall case
         elseif ex.head === :macrocall
-            args = Any[]
-            for arg in ex.args
-                if isa(arg, LineNumberNode)
-                    push!(args, nothing)
-                else
-                    push!(args, arg)
-                end
+            ex.args = map(ex.args) do subex
+                isa(subex, LineNumberNode) ? nothing : subex
             end
-            ex.args = args
         end
         for subex in ex.args
             subex isa Expr && remove_linenums!(subex)
@@ -51,30 +46,19 @@ function remove_argument_names(lnn::LineNumberNode)::LineNumberNode
 end
 function remove_argument_names(ex::Expr)::Expr
     if ex.head === :call
-        exprs = Any[]
-        for sub in ex.args[2:end]
-            if sub isa Expr
-                if sub.head === :(::)
-                    if length(sub.args) == 2
-                        push!(exprs, Expr(:(::), sub.args[end]))
-                    else
-                        push!(exprs, sub)
-                    end
-                else
-                    push!(exprs, sub)
-                end
+        exprs = map(ex.args[2:end]) do subex
+            if subex isa Expr && subex.head === :(::) && length(subex.args) == 2
+                Expr(:(::), subex.args[end])
             else
-                push!(exprs, sub)
+                subex
             end
         end
         Expr(:call, ex.args[1], exprs...)
     elseif ex.head === :block
-        exprs = Any[]
-        for sub in ex.args
-            subex = remove_argument_names(sub)
-            push!(exprs, subex)
-        end
+        exprs = map(remove_argument_names, ex.args)
         Expr(:block, exprs...)
+    else
+        ex
     end
 end
 
