@@ -1,4 +1,6 @@
-module test_meringues_syrup
+using Jive
+# syntax: type declarations on global variables are not yet supported
+@If VERSION >= v"1.8" module test_meringues_syrup
 
 using Test
 using Meringues # Syrup
