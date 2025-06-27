@@ -9,14 +9,14 @@ end
 function Base.isapprox(lhs::Expr, rhs::Expr)::Bool
     left  = copy(lhs)
     right = copy(rhs)
-    remove_linenums!(left) == remove_linenums!(right)
+    remove_linenums_macrocall!(left) == remove_linenums_macrocall!(right)
 end
 
 
-# Recipe.remove_linenums!
+# Recipe.remove_linenums_macrocall!
 #
 # from julia/base/expr.jl
-function remove_linenums!(@nospecialize ex)
+function remove_linenums_macrocall!(@nospecialize ex)
     if ex isa Expr
         if ex.head === :block || ex.head === :quote
             # remove line number expressions from metadata (not argument literal or inert) position
@@ -32,7 +32,7 @@ function remove_linenums!(@nospecialize ex)
             end
         end
         for subex in ex.args
-            subex isa Expr && remove_linenums!(subex)
+            subex isa Expr && remove_linenums_macrocall!(subex)
         end
     elseif ex isa CodeInfo
         ex.debuginfo = Core.DebugInfo(ex.debuginfo.def) # TODO: filter partially, but keep edges

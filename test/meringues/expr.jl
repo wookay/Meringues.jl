@@ -10,7 +10,7 @@ ex = Base.remove_linenums!(copy(expr))
 @test ex.args[2] == LineNumberNode(6, @__FILE__)
 @test ex == Expr(:macrocall, Symbol("@MIME_str"), LineNumberNode(6, @__FILE__), "text/html")
 
-ex = Recipe.remove_linenums!(copy(expr))
+ex = Recipe.remove_linenums_macrocall!(copy(expr))
 @test string(ex) == "MIME\"text/html\""
 @test ex.args[2] === nothing
 @test ex == Expr(:macrocall, Symbol("@MIME_str"), nothing, "text/html")
